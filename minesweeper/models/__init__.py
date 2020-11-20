@@ -7,6 +7,11 @@ class GameModel:
     def __init__(self, shape, nr_mines):
         self._mine_locations = np.zeros(shape)  # 0=no mine, 1=mine
         self._field_statuses = np.zeros(shape) -1  # -1=not revealed, 0=blank, >0=nr of mines in adjacent cells
+        nr_mines_placed = 0
+        while nr_mines_placed < nr_mines:
+            x, y = self._random_location()
+            if self._mine_locations[x][y] == 0:
+                self._mine_locations[x][y] = 1
 
     def reveal_field(self, x, y) -> bool:
         if self._mine_locations[x][y]:
@@ -17,6 +22,12 @@ class GameModel:
             self._field_statuses[x][y] = self._look_around(x, y)
             self._reveal_adjacent_fields(x, y)
             return True
+
+    def _random_location(self) -> Tuple[int, int]:
+        return tuple([
+            np.random.randint(0, self._mine_locations.shape[i])
+            for i in [0, 1]
+        ])
 
     def _get_adjacent_coordinates(self, x, y) -> List[Tuple[int, int]]:
         # returns a list of all valid coordinates (x, y) in a 3 by 3 square around the specified point
