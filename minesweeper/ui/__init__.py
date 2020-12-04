@@ -15,12 +15,6 @@ class GameUI:
     def game(self):
         return self._game
 
-    def get_button(self, x, y):
-        return self._buttons[self._get_button_index(x, y)]
-
-    def start(self):
-        self._window.mainloop()
-
     @staticmethod
     def _on_click(ui, x, y):
         result, field_statuses = ui.game.handle_click(x, y)
@@ -48,20 +42,29 @@ class GameUI:
     def _initialize_window(self, shape):
         self._window = tkinter.Tk()
         self._window.title("Minesweeper")
-        # self._window.geometry = "x".join(str(i) for i in window_size)
         for y in range(shape[0]):
             for x in range(shape[1]):
-                btn = tkinter.Button(self._window, text="", command=partial(self._on_click, self, x, y))
+                btn = tkinter.Button(self._window, text=" ", command=partial(self._on_click, self, x, y))
                 btn.grid(row=y, column=x)
                 idx = self._get_button_index(x, y)
                 self._buttons[idx] = btn
+
+    def get_button(self, x, y):
+        return self._buttons[self._get_button_index(x, y)]
+
+    def start(self):
+        self._window.mainloop()
+
+    def reset_buttons(self):
+        for btn in self._buttons:
+            btn.configure(text=" ")
 
     def show_game_over_modal(self):
         popup = tkinter.Toplevel(self._window)
 
         def _restart_game():
             popup.destroy()
-            self.game.restart
+            self.game.restart()
 
         label = tkinter.Label(popup, text="Game over")
         label.grid(row=0, column=0)
