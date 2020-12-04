@@ -8,7 +8,7 @@ class GameModel:
 
     def __init__(self, shape, nr_mines):
         self._mine_locations = np.zeros(shape)  # 0=no mine, 1=mine
-        self._field_statuses = np.zeros(shape) -1  # -1=not revealed, 0=blank, >0=nr of mines in adjacent cells, np.inf: contains mine
+        self._field_statuses = np.zeros(shape) - 1  # -1=not revealed, 0=blank, >0=nr of mines in adjacent cells, np.inf: contains mine
         nr_mines_placed = 0
         while nr_mines_placed < nr_mines:
             row, col = self._random_location()
@@ -27,8 +27,10 @@ class GameModel:
             return False
         else:
             # No mine here -> update field status to "revealed" and look around of we can uncover more
-            self._field_statuses[row][col] = self._look_around(row, col)
-            self._reveal_adjacent_fields(row, col)
+            nr_mines_adjacent = self._look_around(row, col)
+            self._field_statuses[row][col] = nr_mines_adjacent
+            if nr_mines_adjacent == 0:
+                self._reveal_adjacent_fields(row, col)
             return True
 
     def _random_location(self) -> Tuple[int, int]:
