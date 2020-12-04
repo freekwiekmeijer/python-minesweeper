@@ -52,5 +52,7 @@ class GameModel:
         # Reveal all fields around (x, y) until it encounters a mine in the perimeter
         coordinates = self._get_adjacent_coordinates(x, y)
         for c in coordinates:
-            if self._look_around(c[0], c[1]) == 0:
+            nr_mines_adjacent = self._look_around(c[0], c[1]) 
+            self._field_statuses[c[0], c[1]] = nr_mines_adjacent 
+            if nr_mines_adjacent == 0:
                 self._reveal_adjacent_fields(c[0], c[1])
