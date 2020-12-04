@@ -46,7 +46,7 @@ class GameModel:
         ]
         return [
             (row, col)
-            for (row, col) in coordinates
+            for row, col in coordinates
             if row >= 0 and row < self._mine_locations.shape[0]
             and col >= 0 and col < self._mine_locations.shape[1]
         ]
@@ -56,11 +56,15 @@ class GameModel:
         coordinates = self._get_adjacent_coordinates(row, col)
         return sum([self._mine_locations[row][col] for (row, col) in coordinates])
 
-    def _reveal_adjacent_fields(self, row, col, recursion_depth=0) -> bool:
+    def _reveal_adjacent_fields(self, row, col, recursion_depth=0):
         # Reveal all fields around (row, col) until it encounters a mine in the perimeter
-        coordinates = self._get_adjacent_coordinates(row, col)
-        for c in coordinates:
-            nr_mines_adjacent = self._look_around(c[0], c[1]) 
-            self._field_statuses[c[0], c[1]] = nr_mines_adjacent 
+        coordinates = [
+            (row, col)
+            for row, col in self._get_adjacent_coordinates(row, col)
+            if self.field_statuses[row, col] == -1
+        ]
+        for row, col in coordinates:
+            nr_mines_adjacent = self._look_around(row, col)
+            self._field_statuses[row, col] = nr_mines_adjacent
             if nr_mines_adjacent == 0 and recursion_depth < self._max_recursion_depth:
-                self._reveal_adjacent_fields(c[0], c[1], recursion_depth+1)
+                self._reveal_adjacent_fields(row, col, recursion_depth+1)
